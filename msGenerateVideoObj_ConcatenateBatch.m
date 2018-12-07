@@ -271,6 +271,14 @@ count2 =length(aviFiles)+1;
                 display(['Problem matching up timestamps for ' dirName]);
             end
         end
+        
+        if strcmp(datFiles(i).name, 'settings_and_notes.dat')
+            fileID = fopen([dirName filesep datFiles(i).name],'r');
+            textscan(fileID, '%[^\n\r]', 1, 'ReturnOnError', false);
+            dataArray = textscan(fileID, '%s%s%s%s%[^\n\r]', 1, 'Delimiter', '\t', 'ReturnOnError', false);
+            ms.Experiment = dataArray(:,1);
+            ms.Experiment = string(ms.Experiment{1});
+        end
     end
 
     %now that we have the correct timestamp saved we need to find the major

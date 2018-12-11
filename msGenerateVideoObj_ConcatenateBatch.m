@@ -84,6 +84,26 @@ function ms = msGenerateVideoObj_ConcatenateBatch(dirName, filePrefix)
      end 
        aviFiles = new_aviFiles; 
     
+       
+       %if the one before it is more than 1 away and not a 1, then move. 
+       for videoNum =1: length(aviFiles)
+            videoOrder(videoNum) = sscanf(aviFiles(videoNum).name,'msCam%d.avi');             
+       end
+       videoOrder = videoOrder'; 
+       
+       for num = 1: length(folderNames)
+              location = strfind(aviFolders, folderNames(num)); %find the folder we are looking at 
+              idx_location = find(~cellfun(@isempty,location)); %the index of the videos in that folder              
+              videos = aviFiles(idx_location);  %save them in a separate array to sort and put back into aviFiles
+              videos_idx = videoOrder(idx_location);
+              
+              [~,idxmatr] = sort(videos_idx); %sort the videos with their saved index
+              videos = videos(idxmatr); %with their saved index reorder "videos"
+              
+              %Now placing them back into aviFiles:              
+              aviFiles = [aviFiles(1:idx_location(1)-1);    videos;    aviFiles(idx_location(end)+1:end)];              
+       end    
+       
 % need to make folder save the locations of the avi files
     %now we need to rename these so that these files are access correctly: 
     for i =1: (length(aviFiles) +length(datFiles))  
@@ -101,8 +121,7 @@ count2 =length(aviFiles)+1;
     %gets the names of all the folder names in the directory       
             folderNames(1) = []; 
             folderNames(1) = [];
-            tempNames = folder; 
-       
+            tempNames = folder;        
      
     ms.numFiles = 0;        %Number of relevant .avi files in the folder
     ms.numFrames = 0;       %Number of frames within said videos
@@ -120,7 +139,6 @@ count2 =length(aviFiles)+1;
     anomilynames = NaN(1,4);
     count = 0;
     
-
     o = nan(1,length(folder));
     stamps = zeros(1,length(folder));
     j = 1;
@@ -272,7 +290,8 @@ count2 =length(aviFiles)+1;
             end
         end
         
-        if strcmp(datFiles(i).name, 'settings_and_notes.dat')
+        
+         if strcmp(datFiles(i).name, 'settings_and_notes.dat')
             fileID = fopen([dirName filesep datFiles(i).name],'r');
             textscan(fileID, '%[^\n\r]', 1, 'ReturnOnError', false);
             dataArray = textscan(fileID, '%s%s%s%s%[^\n\r]', 1, 'Delimiter', '\t', 'ReturnOnError', false);

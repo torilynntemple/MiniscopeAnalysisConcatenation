@@ -91,6 +91,10 @@ function ms = msGenerateVideoObj_ConcatenateBatch(dirName, filePrefix)
        end
        videoOrder = videoOrder'; 
        
+        for num =1 : length(aviFiles)
+         aviFolders(num) = aviFiles(num).folder; %we can index easier this way 
+        end 
+     
        for num = 1: length(folderNames)
               location = strfind(aviFolders, folderNames(num)); %find the folder we are looking at 
               idx_location = find(~cellfun(@isempty,location)); %the index of the videos in that folder              

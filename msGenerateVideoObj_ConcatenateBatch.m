@@ -87,7 +87,11 @@ function ms = msGenerateVideoObj_ConcatenateBatch(dirName, filePrefix)
        
        %if the one before it is more than 1 away and not a 1, then move. 
        for videoNum =1: length(aviFiles)
-            videoOrder(videoNum) = sscanf(aviFiles(videoNum).name,'msCam%d.avi');             
+        if ~isempty(strfind(filePrefix,'msCam'))
+            videoOrder(videoNum) = sscanf(aviFiles(videoNum).name,'msCam%d.avi');
+        elseif ~isempty(strfind(filePrefix,'behavCam'))
+            videoOrder(videoNum) = sscanf(aviFiles(videoNum).name,'behavCam%d.avi');
+        end           
        end
        videoOrder = videoOrder'; 
        

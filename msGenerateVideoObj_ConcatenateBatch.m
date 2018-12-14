@@ -198,7 +198,7 @@ count2 =length(aviFiles)+1;
             camNumtemp = dataArray{:, 1};       %camera number
             frameNumtemp = dataArray{:, 2};            
             A = unique(camNumtemp); 
-            sysClocktemp = dataArray{:, 3};     %system clock
+            sysClocktemp = dataArray{:, 3};     %system clock 
             buffer1temp = dataArray{:, 4};      %buffer
             ms.timestamps(i,1) = max(frameNumtemp); 
             %--------------------------------------------------------------
@@ -220,6 +220,7 @@ count2 =length(aviFiles)+1;
                 cam1 = max(idx); 
                 clearvars dataArray;            %clear variables from dataArray
                 fclose(fileID);
+                sysClocktemp(1) = 0;  
                     if i == 1
                         camNum = camNumtemp ;
                         %frameNum =  frameNumtemp;
@@ -243,7 +244,9 @@ count2 =length(aviFiles)+1;
                         frameTot0 = frameTot0 + camNum1(length(camNum1));
                 
             %--------------------------------------------------------------
-            else                
+            else 
+                sysClocktemp(1) = 0; 
+                sysClocktemp(2) = 0; 
                 idx0 = find(camNumtemp == min(A));     
                 idx1 = find(camNumtemp == max(A));     
                 camNum0 = frameNumtemp(idx0);
@@ -308,21 +311,6 @@ count2 =length(aviFiles)+1;
         end
     end
 
-    %now that we have the correct timestamp saved we need to find the major
-    %time jumps within the file to correct for them. Remembering that most
-    %timestamps begin with a crazy huge number from the DAQ software, we
-    %don't want those in there. 
-    
-    %Theoretically each timestamp should be 33 milliseconds between each.
-    %We can therefore if there is a jump of 50,000 then we can assume to
-    %get rid of this: 
-    
-    idxJump = find(diff(ms.time) > 50000); 
-    
-    for jumpNum =1: length(idxJump)
-        ms.time(idxJump+1) = ms.time(idxJump); 
-    end 
-    
     
 %     %figure out date and time of recording if that information if available
 %     %in folder path

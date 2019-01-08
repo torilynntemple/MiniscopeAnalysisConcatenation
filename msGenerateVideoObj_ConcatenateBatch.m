@@ -23,7 +23,7 @@ function ms = msGenerateVideoObj_ConcatenateBatch(dirName, filePrefix)
     end 
     
     for num =1: length(datFiles)
-        order{num} = sscanf(s(num,1),'H%d_M%d_S%d*');
+        order{1,num} = sscanf(s(num,1),'H%d_M%d_S%d*');
     end 
     
       %this next chunck takes the order variable which has the hours,
@@ -200,7 +200,6 @@ count2 =length(aviFiles)+1;
             A = unique(camNumtemp); 
             sysClocktemp = dataArray{:, 3};     %system clock 
             buffer1temp = dataArray{:, 4};      %buffer
-            ms.timestamps(i,1) = max(frameNumtemp); 
             %--------------------------------------------------------------
             if i ==1
                 frameTot = 0; 
@@ -221,6 +220,8 @@ count2 =length(aviFiles)+1;
                 clearvars dataArray;            %clear variables from dataArray
                 fclose(fileID);
                 sysClocktemp(1) = 0;  
+                ms.timestamps0(i,1) = max(frameNumtemp(find(camNumtemp == A(1)))); 
+                ms.timestamps1(i,1) = max(frameNumtemp(find(camNumtemp == A(1))));
                     if i == 1
                         camNum = camNumtemp ;
                         %frameNum =  frameNumtemp;
@@ -257,6 +258,8 @@ count2 =length(aviFiles)+1;
 %                 sysClocktempidx0 = sysClocktemp(idx0);
                 clearvars dataArray;            %clear variables from dataArray
                 fclose(fileID);
+                ms.timestamps0(i,1) = max(frameNumtemp(find(camNumtemp == A(1)))); 
+                ms.timestamps1(i,1) = max(frameNumtemp(find(camNumtemp == A(2))));
                 
                     if i == 1
                         camNum = camNumtemp ;                         
@@ -291,11 +294,13 @@ count2 =length(aviFiles)+1;
                 ms.time = sysClock1;
                 ms.time(1) = 0;
                 ms.maxBufferUsed = max(buffer1(camNum==j));
+                ms.timestamps = ms.timestamps1; 
             elseif (frameTot0 == ms.numFrames) && (sum(camNum==j) == ms.numFrames)
                 ms.camNumber = j;
                 ms.time = sysClock0;
                 ms.time(1) = 0;
                 ms.maxBufferUsed = max(buffer1(camNum==j));
+                ms.timestamps = ms.timestamps0; 
             else
                 display(['Problem matching up timestamps for ' dirName]);
             end
